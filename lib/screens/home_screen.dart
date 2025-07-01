@@ -45,21 +45,57 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_loading) return Center(child: CircularProgressIndicator());
     return Scaffold(
       appBar: AppBar(
-        title: Text('Touristic Sites'),
+        title: Text('Sitios turísticos'),
         actions: [
-          IconButton(icon: Icon(Icons.logout), onPressed: _logout),
+          IconButton(icon: Icon(Icons.logout), onPressed: _logout, tooltip: 'Cerrar sesión'),
         ],
       ),
       body: ListView.builder(
+        padding: const EdgeInsets.all(12),
         itemCount: _sites.length,
         itemBuilder: (context, idx) {
           final site = _sites[idx];
-          return ListTile(
-            title: Text(site.title),
-            subtitle: Text(site.description),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => SiteDetailScreen(site: site, user: _user)),
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => SiteDetailScreen(site: site, user: _user)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (site.photoUrls.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      child: Image.network(
+                        site.photoUrls.first,
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          height: 180,
+                          color: Colors.grey[300],
+                          child: Center(child: Icon(Icons.image, size: 60, color: Colors.grey)),
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(site.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 8),
+                        Text(site.description, maxLines: 3, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -67,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: _user?.role == 'publisher'
           ? FloatingActionButton(
               child: Icon(Icons.add),
+              tooltip: 'Agregar sitio',
               onPressed: () async {
                 await Navigator.push(
                   context,

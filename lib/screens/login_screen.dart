@@ -15,13 +15,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: Text('Iniciar sesión')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(controller: _emailController, decoration: InputDecoration(labelText: 'Email')),
-            TextField(controller: _passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
+            TextField(controller: _emailController, decoration: InputDecoration(labelText: 'Correo electrónico')),
+            TextField(controller: _passwordController, decoration: InputDecoration(labelText: 'Contraseña'), obscureText: true),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -32,11 +32,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Login failed: ${e.toString()}')),
+                    SnackBar(content: Text('Error al iniciar sesión: ${e.toString()}')),
                   );
                 }
               },
-              child: Text('Login'),
+              child: Text('Iniciar sesión'),
             ),
             TextButton(
               onPressed: () async {
@@ -48,30 +48,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Register'),
+                      title: Text('Registrarse'),
                       content: StatefulBuilder(
                         builder: (context, setState) {
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TextField(
-                                decoration: InputDecoration(labelText: 'Email'),
+                                decoration: InputDecoration(labelText: 'Correo electrónico'),
                                 onChanged: (v) => email = v,
                               ),
                               TextField(
-                                decoration: InputDecoration(labelText: 'Password'),
+                                decoration: InputDecoration(labelText: 'Contraseña'),
                                 obscureText: true,
                                 onChanged: (v) => password = v,
                               ),
                               TextField(
-                                decoration: InputDecoration(labelText: 'Display Name'),
+                                decoration: InputDecoration(labelText: 'Nombre para mostrar'),
                                 onChanged: (v) => displayName = v,
                               ),
                               DropdownButton<String>(
                                 value: role,
                                 items: [
-                                  DropdownMenuItem(value: 'visitor', child: Text('Visitor')),
-                                  DropdownMenuItem(value: 'publisher', child: Text('Publisher')),
+                                  DropdownMenuItem(value: 'visitor', child: Text('Visitante')),
+                                  DropdownMenuItem(value: 'publisher', child: Text('Publicador')),
                                 ],
                                 onChanged: (v) => setState(() => role = v!),
                               ),
@@ -86,26 +86,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               await _service.signUp(email, password, role, displayName);
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Registration successful! Please log in.')),
+                                SnackBar(content: Text('¡Registro exitoso! Por favor inicia sesión.')),
                               );
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Registration failed: \\${e.toString()}')),
+                                SnackBar(content: Text('Error al registrarse: ${e.toString()}')),
                               );
                             }
                           },
-                          child: Text('Register'),
+                          child: Text('Registrarse'),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: Text('Cancel'),
+                          child: Text('Cancelar'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Register'),
+              child: Text('Registrarse'),
             ),
           ],
         ),

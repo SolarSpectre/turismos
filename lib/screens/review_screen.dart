@@ -44,20 +44,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Reviews')),
+      appBar: AppBar(title: Text('Reseñas')),
       body: Column(
         children: [
           Expanded(
             child: ListView(
               children: _reviews.map((r) => ListTile(
                 title: Text(r.content),
-                subtitle: r.parentReviewId != null ? Text('Reply') : null,
-                trailing: IconButton(
+                subtitle: r.parentReviewId != null ? Text('Respuesta') : null,
+                trailing: widget.user != null && widget.user.role != 'visitor' ? IconButton(
                   icon: Icon(Icons.reply),
                   onPressed: () {
                     setState(() => _replyTo = r.id);
                   },
-                ),
+                ) : null,
               )).toList(),
             ),
           ),
@@ -70,7 +70,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     child: TextField(
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintText: _replyTo == null ? 'Write a review...' : 'Reply...',
+                        hintText: _replyTo == null ? 'Escribe una reseña...' : 'Responder...',
                       ),
                     ),
                   ),
@@ -84,7 +84,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           else
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Only publishers can add reviews.'),
+              child: Text('Solo los publicadores pueden agregar reseñas.'),
             ),
         ],
       ),
