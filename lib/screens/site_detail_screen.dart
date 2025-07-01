@@ -39,19 +39,55 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
     }
   }
 
-  void _openMaps() async {
-    final geoUrl = Uri.parse('geo:${widget.site.lat},${widget.site.lng}?q=${widget.site.lat},${widget.site.lng}');
-    final webUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=${widget.site.lat},${widget.site.lng}');
-    print('Trying to launch geo: $geoUrl');
-    if (await canLaunchUrl(geoUrl)) {
-      await launchUrl(geoUrl, mode: LaunchMode.externalApplication);
-    } else if (await canLaunchUrl(webUrl)) {
-      print('geo: failed, trying web URL: $webUrl');
-      await launchUrl(webUrl, mode: LaunchMode.externalApplication);
-    } else {
-      print('Could not launch maps for either geo: or web URL');
+  Future<void> _openInGoogleMaps() async {
+    if (widget.site.lat == null || widget.site.lng == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No se pudo abrir la ubicación en Google Maps.')),
+        const SnackBar(content: Text('Obten tu ubicacion primero')),
+      );
+      return;
+    }
+
+    // Try multiple URL schemes for better compatibility
+    final urls = [
+      // Google Maps app URL scheme with proper format
+      'geo:${widget.site.lat},${widget.site.lng}?q=${widget.site.lat},${widget.site.lng}',
+      // Google Maps navigation URL
+      'google.navigation:q=${widget.site.lat},${widget.site.lng}',
+      // Google Maps web URL (fallback)
+      'https://www.google.com/maps?q=${widget.site.lat},${widget.site.lng}&z=15',
+      // Alternative Google Maps URL
+      'https://maps.google.com/?q=${widget.site.lat},${widget.site.lng}&z=15',
+    ];
+
+    bool launched = false;
+    
+    for (String url in urls) {
+      try {
+        final uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          final result = await launchUrl(
+            uri, 
+            mode: LaunchMode.externalApplication,
+          );
+          if (result) {
+            launched = true;
+            break;
+          }
+        }
+      } catch (e) {
+        // Continue to next URL if this one fails
+        continue;
+      }
+    }
+
+    if (!launched) {
+      // Show a more helpful message with the coordinates
+      final coordinates = '${widget.site.lat}, ${widget.site.lng}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudo abrir Google Maps. Coordenadas: $coordinates'),
+          duration: const Duration(seconds: 5),
+        ),
       );
     }
   }
@@ -83,7 +119,7 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: GestureDetector(
-                onTap: _openMaps,
+                onTap: _openInGoogleMaps,
                 child: Row(
                   children: [
                     Icon(Icons.location_on, color: Colors.blue),
