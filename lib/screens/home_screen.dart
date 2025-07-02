@@ -5,6 +5,7 @@ import '../services/supabase_service.dart';
 import 'post_site_screen.dart';
 import 'site_detail_screen.dart';
 import 'login_screen.dart';
+import '../widgets/post_site_modal.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -98,21 +99,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Show stars based on averageScore
                             for (int i = 1; i <= 5; i++)
                               Icon(
-                                i <= (site.averageScore?.floor() ?? 0)
+                                i <= site.averageScore.floor()
                                     ? Icons.star
                                     : Icons.star_border,
-                                color: Colors.green[700],
+                                color: Colors.amber,
                                 size: 20,
                               ),
                             SizedBox(width: 8),
-                            if (site.averageScore != null)
-                              Text(
-                                site.averageScore!.toStringAsFixed(1),
-                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-                              ),
+                            Text(
+                              site.averageScore.toStringAsFixed(1),
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                            ),
                             SizedBox(width: 8),
-                            if (site.reviewCount != null)
-                              Text('(${site.reviewCount})', style: TextStyle(color: Colors.black54)),
+                            Text('(${site.reviewCount})', style: TextStyle(color: Colors.black54)),
                           ],
                         ),
                         SizedBox(height: 8),
@@ -130,11 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ? FloatingActionButton(
               tooltip: 'Agregar sitio',
               onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => PostSiteScreen(user: _user)),
-                );
-                _loadUserAndSites();
+                showDialog(
+                  context: context,
+                  builder: (context) => PostSiteModal(user: _user),
+                ).then((_) => _loadUserAndSites());
               },
               child: Icon(Icons.add),
             )
