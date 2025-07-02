@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 class SiteDetailScreen extends StatefulWidget {
   final Site site;
   final AppUser? user;
-  SiteDetailScreen({required this.site, this.user});
+  const SiteDetailScreen({super.key, required this.site, this.user});
 
   @override
   State<SiteDetailScreen> createState() => _SiteDetailScreenState();
@@ -40,14 +40,6 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
   }
 
   Future<void> _openInGoogleMaps() async {
-    if (widget.site.lat == null || widget.site.lng == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Obten tu ubicacion primero')),
-      );
-      return;
-    }
-
-    // Try multiple URL schemes for better compatibility
     final urls = [
       // Google Maps app URL scheme with proper format
       'geo:${widget.site.lat},${widget.site.lng}?q=${widget.site.lat},${widget.site.lng}',
@@ -94,6 +86,7 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final images = widget.site.photoUrls;
     final isVisitor = widget.user == null || widget.user!.role == 'visitor';
     return Scaffold(
       appBar: AppBar(title: Text(widget.site.title)),
@@ -101,17 +94,227 @@ class _SiteDetailScreenState extends State<SiteDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.site.photoUrls.isNotEmpty)
-              SizedBox(
-                height: 200,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: widget.site.photoUrls.map((url) => Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.network(url, width: 200, fit: BoxFit.cover),
-                  )).toList(),
+            if (images.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) {
+                            int currentPage = 0;
+                            PageController controller = PageController();
+                            return StatefulBuilder(
+                              builder: (context, setState) => Dialog(
+                                insetPadding: EdgeInsets.all(16),
+                                backgroundColor: Colors.transparent,
+                                child: Container(
+                                  constraints: BoxConstraints(maxHeight: 400),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      PageView.builder(
+                                        controller: controller,
+                                        itemCount: images.length,
+                                        onPageChanged: (i) => setState(() => currentPage = i),
+                                        itemBuilder: (context, index) => ClipRRect(
+                                          borderRadius: BorderRadius.circular(12),
+                                          child: Image.network(
+                                            images[index],
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      if (images.length > 1 && currentPage > 0)
+                                        Positioned(
+                                          left: 8,
+                                          child: IconButton(
+                                            icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 32),
+                                            onPressed: () {
+                                              if (currentPage > 0) {
+                                                controller.previousPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      if (images.length > 1 && currentPage < images.length - 1)
+                                        Positioned(
+                                          right: 8,
+                                          child: IconButton(
+                                            icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 32),
+                                            onPressed: () {
+                                              if (currentPage < images.length - 1) {
+                                                controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: SizedBox(
+                        height: 220,
+                        child: Row(
+                          children: [
+                            // Left: Large image
+                            Expanded(
+                              flex: 2,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                                child: Image.network(
+                                  images[0],
+                                  fit: BoxFit.cover,
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ),
+                            if (images.length > 1) ...[
+                              SizedBox(width: 4), // Small gap between columns
+                              Expanded(
+                                flex: 1,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(12),
+                                        ),
+                                        child: Image.network(
+                                          images[1],
+                                          fit: BoxFit.cover,
+                                          height: double.infinity,
+                                          width: double.infinity,
+                                        ),
+                                      ),
+                                    ),
+                                    if (images.length > 2)
+                                      SizedBox(height: 4),
+                                    if (images.length > 2)
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(12),
+                                          ),
+                                          child: Image.network(
+                                            images[2],
+                                            fit: BoxFit.cover,
+                                            height: double.infinity,
+                                            width: double.infinity,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 12,
+                      bottom: 12,
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) {
+                              int currentPage = 0;
+                              PageController controller = PageController();
+                              return StatefulBuilder(
+                                builder: (context, setState) => Dialog(
+                                  insetPadding: EdgeInsets.all(16),
+                                  backgroundColor: Colors.transparent,
+                                  child: Container(
+                                    constraints: BoxConstraints(maxHeight: 400),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        PageView.builder(
+                                          controller: controller,
+                                          itemCount: images.length,
+                                          onPageChanged: (i) => setState(() => currentPage = i),
+                                          itemBuilder: (context, index) => ClipRRect(
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: Image.network(
+                                              images[index],
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        ),
+                                        if (images.length > 1 && currentPage > 0)
+                                          Positioned(
+                                            left: 8,
+                                            child: IconButton(
+                                              icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 32),
+                                              onPressed: () {
+                                                if (currentPage > 0) {
+                                                  controller.previousPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        if (images.length > 1 && currentPage < images.length - 1)
+                                          Positioned(
+                                            right: 8,
+                                            child: IconButton(
+                                              icon: Icon(Icons.arrow_forward_ios, color: Colors.white, size: 32),
+                                              onPressed: () {
+                                                if (currentPage < images.length - 1) {
+                                                  controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.ease);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.photo_library, color: Colors.white, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                '${images.length}',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                "Acerca de",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(widget.site.description),

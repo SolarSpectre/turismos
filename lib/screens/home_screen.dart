@@ -7,6 +7,8 @@ import 'site_detail_screen.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -25,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadUserAndSites() async {
     final user = await SupabaseService().getCurrentUser();
     final sites = await SupabaseService().getSites();
+    if (!mounted) return;
     setState(() {
       _user = user;
       _sites = sites;
@@ -90,6 +93,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(site.title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                         SizedBox(height: 8),
+                        Row(
+                          children: [
+                            // Show stars based on averageScore
+                            for (int i = 1; i <= 5; i++)
+                              Icon(
+                                i <= (site.averageScore?.floor() ?? 0)
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.green[700],
+                                size: 20,
+                              ),
+                            SizedBox(width: 8),
+                            if (site.averageScore != null)
+                              Text(
+                                site.averageScore!.toStringAsFixed(1),
+                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            SizedBox(width: 8),
+                            if (site.reviewCount != null)
+                              Text('(${site.reviewCount})', style: TextStyle(color: Colors.black54)),
+                          ],
+                        ),
+                        SizedBox(height: 8),
                         Text(site.description, maxLines: 3, overflow: TextOverflow.ellipsis),
                       ],
                     ),
@@ -102,7 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: _user?.role == 'publisher'
           ? FloatingActionButton(
-              child: Icon(Icons.add),
               tooltip: 'Agregar sitio',
               onPressed: () async {
                 await Navigator.push(
@@ -111,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
                 _loadUserAndSites();
               },
+              child: Icon(Icons.add),
             )
           : null,
     );

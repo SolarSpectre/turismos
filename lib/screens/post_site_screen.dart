@@ -6,7 +6,7 @@ import '../models/user.dart';
 
 class PostSiteScreen extends StatefulWidget {
   final AppUser? user;
-  PostSiteScreen({this.user});
+  const PostSiteScreen({super.key, this.user});
   @override
   State<PostSiteScreen> createState() => _PostSiteScreenState();
 }
@@ -60,12 +60,12 @@ class _PostSiteScreenState extends State<PostSiteScreen> {
     setState(() => _loading = true);
     try {
       final photos = await ImageService.pickImages(minCount: 5);
-      print('Picked photos: ' + photos.toString());
+      print('Picked photos: $photos');
       setState(() {
         _photoPaths = photos;
       });
     } catch (e) {
-      print('Error picking photos: ' + e.toString());
+      print('Error picking photos: $e');
       // Show error
     } finally {
       setState(() => _loading = false);
@@ -91,10 +91,10 @@ class _PostSiteScreenState extends State<PostSiteScreen> {
         lng: _position!.longitude,
         publisherId: widget.user!.id,
       );
-      print('Site created with id: ' + siteId);
+      print('Site created with id: $siteId');
       print('Uploading images...');
       final urls = await ImageService.uploadImages(_photoPaths, siteId);
-      print('Uploaded image URLs: ' + urls.toString());
+      print('Uploaded image URLs: $urls');
       print('Saving photo URLs to DB...');
       await supabase.addSitePhotos(siteId, urls);
       print('Site and photos saved successfully');
@@ -103,7 +103,7 @@ class _PostSiteScreenState extends State<PostSiteScreen> {
       });
       Navigator.pop(context);
     } catch (e) {
-      print('Error in submit: ' + e.toString());
+      print('Error in submit: $e');
       setState(() {
         _loading = false;
       });

@@ -7,7 +7,7 @@ class ImageService {
   static Future<List<String>> pickImages({int minCount = 5, int maxSizeMB = 5}) async {
     final picker = ImagePicker();
     final picked = await picker.pickMultiImage();
-    if (picked == null || picked.length < minCount) {
+    if (picked.length < minCount) {
       throw Exception('Please select at least $minCount images.');
     }
     for (final img in picked) {
