@@ -49,7 +49,17 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_loading) return Center(child: CircularProgressIndicator());
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sitios turísticos'),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Sitios turísticos'),
+            if (_user != null && _user!.displayName.isNotEmpty)
+              Text(
+                '¡Bienvenido, ${_user!.displayName}! ',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white70),
+              ),
+          ],
+        ),
         actions: [
           IconButton(icon: Icon(Icons.logout), onPressed: _logout, tooltip: 'Cerrar sesión'),
         ],

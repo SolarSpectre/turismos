@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,10 +7,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: '',
-    anonKey: '',
+    url: 'https://lokeiajtojqquhxmvpss.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxva2VpYWp0b2pxcXVoeG12cHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMjIwMjAsImV4cCI6MjA2Njg5ODAyMH0.rTZMw9XwXnByWDSFuxIPbdHJo3QjNoVgvpMcFrKpsEY',
   );
-  runApp(MyApp());
+   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarIconBrightness: Brightness.light),
+  );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
+    (_) => runApp(const MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -45,7 +52,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF1976D2),
+          backgroundColor: Color.fromARGB(255, 249, 128, 48),
           foregroundColor: Colors.white,
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
