@@ -7,8 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://lokeiajtojqquhxmvpss.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxva2VpYWp0b2pxcXVoeG12cHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMjIwMjAsImV4cCI6MjA2Njg5ODAyMH0.rTZMw9XwXnByWDSFuxIPbdHJo3QjNoVgvpMcFrKpsEY',
+    url: '',
+    anonKey: '',
   );
    WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
@@ -32,7 +32,6 @@ class MyApp extends StatelessWidget {
           seedColor: Color(0xFF1976D2),
           primary: Color(0xFF1976D2),
           secondary: Color(0xFF26C6DA), // teal accent
-          background: Color(0xFFF5F5F5),
           surface: Color(0xFFE3F2FD),
           error: Color(0xFFE53935), // lively red
         ),
