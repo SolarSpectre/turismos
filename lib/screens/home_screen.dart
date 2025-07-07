@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/site.dart';
 import '../services/supabase_service.dart';
-import 'post_site_screen.dart';
 import 'site_detail_screen.dart';
 import 'login_screen.dart';
 import '../widgets/post_site_modal.dart';

@@ -7,8 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: '',
-    anonKey: '',
+    url: 'https://lokeiajtojqquhxmvpss.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxva2VpYWp0b2pxcXVoeG12cHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMjIwMjAsImV4cCI6MjA2Njg5ODAyMH0.rTZMw9XwXnByWDSFuxIPbdHJo3QjNoVgvpMcFrKpsEY',
   );
    WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
